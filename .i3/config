@@ -13,7 +13,7 @@ floating_modifier $mod
 bindsym $mod+Return exec i3-sensible-terminal
 
 # start dmenu (a program launcher)
-bindsym $mod+d exec dmenu_run
+bindsym $mod+d exec dmenu_run -fn terminus
 
 # change focus
 bindsym $mod+h focus left
@@ -193,3 +193,7 @@ bindsym $mod+m [title="(?i)mutt"] focus
 
 new_window pixel 3
 #hide_edge_borders both
+workspace_auto_back_and_forth yes
+
+for_window [class="Pavucontrol"] floating enable
+for_window [class="X-terminal-emulator" title="Terminator Preferences"] floating enable
