@@ -2,4 +2,4 @@
 
 Personal i3 config.
 
-Install with GNU stow: `stow -R -t ~ --ignore README.md .`
+Install with GNU stow: `stow -R -t ~/.config --ignore README.md .`
