@@ -148,21 +148,25 @@ mode "move" {
 bindsym $mod+Shift+m mode "move"
 
 bar {
+        #status_command i3status
         status_command i3blocks
-        mode hide
-        position bottom
-	font pango:Terminus 8
+        position top
+        font pango:Terminus 8
 
         colors {
-                urgent_workspace #FF4053 #FF4053 #fafafa
+                background #002b36
+                focused_workspace  #b58900 #b58900 #ffffff
+                inactive_workspace #002b36 #002b36 #aaaaaa
+                urgent_workspace   #FF4053 #FF4053 #fafafa
         }
 }
 
 
 # class                 border  backgr. text    indicator
-client.focused          #4c7899 #285577 #ffffff #2e9ef4
-client.focused_inactive #333333 #5f676a #ffffff #484e50
-client.unfocused        #1C1C1C #1F1F1F #888888 #292d2e
+client.focused          #b58900 #b58900 #ffffff #f5c940
+client.focused_inactive #333333 #305b66 #ffffff #484e50
+#client.unfocused        #1C1C1C #1F1F1F #888888 #292d2e
+client.unfocused        #002b36 #002b36 #888888 #292d2e
 client.urgent           #FF4053 #FF4053 #ffffff #eb4509
 
 # kill focused window
@@ -189,6 +193,7 @@ bindsym XF86AudioLowerVolume exec "amixer sset Master 5%-"
 bindsym XF86AudioRaiseVolume exec "amixer sset Master 5%+"
 bindsym XF86AudioMute exec "amixer sset Master toggle"
 
+bindsym $mod+Shift+w exec i3-input -F 'rename workspace to "%s"' -P 'New name: '
 bindsym $mod+m [title="(?i)mutt"] focus
 
 new_window pixel 3
@@ -198,5 +203,6 @@ workspace_auto_back_and_forth yes
 for_window [class="Pavucontrol"] floating enable
 for_window [class="X-terminal-emulator" title="Terminator Preferences"] floating enable
 
-exec xautolock -time 10 -locker ~/bin/lock -notify 45 -notifier "notify-send -u critical -t 10000 -- 'Locking screen in 45 seconds'"
-exec udiskie
+exec --no-startup-id xautolock -time 10 -locker ~/bin/lock -notify 45 -notifier "notify-send -u normal -t 10000 -- 'Locking screen in 45 seconds'"
+exec --no-startup-id udiskie
+exec --no-startup-id setxkbmap no,us -option grp:alt_shift_toggle -option caps:hyper
