@@ -1,0 +1,3 @@
+#!/bin/bash
+eval $(xdotool getwindowgeometry --prefix WIN_ --shell $(xdotool getactivewindow))
+xdotool mousemove -w ${WIN_WINDOW} $((${WIN_WIDTH} / 2)) $((${WIN_HEIGHT} / 2))

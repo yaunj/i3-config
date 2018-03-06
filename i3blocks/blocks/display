@@ -1,0 +1,156 @@
+#!/bin/bash
+DEBUG=0
+LAPTOP=eDP1
+LOGFILE=/tmp/configure-monitors.log
+
+export DISPLAY=:0
+
+log() {
+    if [ 1 -eq $DEBUG ]; then
+        echo "$(date -Iminutes) - $@" >> ${LOGFILE}
+    fi
+}
+
+list_connected() {
+    xrandr | grep ' connected ' | cut -d' ' -f1
+}
+
+list_disconnected() {
+    xrandr | grep ' disconnected ' | cut -d' ' -f1
+}
+
+list_connected_external() {
+    list_connected | grep -v "${LAPTOP}"
+}
+
+has_external() {
+    [ ${#EXTERNAL[@]} -gt 0 ]
+}
+
+monitor_gcd() {
+    xrandr | grep ' connected ' | grep -oE '[[:digit:]]+x[[:digit:]]+' | sort | head -n1
+}
+
+extend() {
+    log "About to extend display"
+
+    log "xrandr --output ${LAPTOP} --auto"
+    xrandr --output "${LAPTOP}" --auto
+
+    log "xrandr --output ${EXTERNAL[0]} --auto --${SIDE}-of ${LAPTOP}"
+    xrandr --output "${EXTERNAL[0]}" --auto "--${SIDE}-of" "${LAPTOP}"
+}
+
+mirror() {
+    resolution=$(monitor_gcd)
+    log "About to mirror with resolution ${resolution}"
+
+    log "xrandr --output ${LAPTOP} --mode ${resolution}"
+    xrandr --output "${LAPTOP}" --mode "${resolution}"
+
+    log "xrandr --output ${EXTERNAL[0]} --mode ${resolution} --same-as ${LAPTOP}"
+    xrandr --output "${EXTERNAL[0]}" --mode "${resolution}" --same-as "${LAPTOP}"
+}
+
+laptop() {
+    log "xrandr --output ${LAPTOP} --auto"
+    xrandr --output "${LAPTOP}" --auto
+
+    for display_name in $(list_connected); do
+        if [ "${display_name}" != "${LAPTOP}" ]; then
+            log "xrandr --output ${display_name} --off"
+            xrandr --output "${display_name}" --off
+        fi
+    done
+}
+
+
+configure_displays() {
+    if has_external; then
+        log "I have extenal display(s)"
+    else
+        MODE=laptop
+        SIDE=''
+    fi
+
+    log "I've decided on ${MODE}"
+
+    case $MODE in
+        mirror) mirror ;;
+        extend) extend ;;
+        laptop) laptop ;;
+    esac
+
+    # Turn off disconnected displays
+    for display_name in $(list_disconnected); do
+        xrandr --output "${display_name}" --off
+    done
+}
+
+from_fallback() {
+    if [ -z $MODE ]; then
+        if has_external; then
+            MODE=extend
+            SIDE=${SIDE:-right}
+        else
+            MODE=laptop
+        fi
+    fi
+}
+
+from_argv() {
+    if [[ $# -gt 0 ]]; then
+        case $1 in
+            left)   MODE=extend; SIDE=left ;;
+            right)  MODE=extend; SIDE=right ;;
+            mirror) MODE=mirror ;;
+            extend) MODE=extend; SIDE=${2:-right} ;;
+            laptop) MODE=laptop ;;
+        esac
+    fi
+}
+
+from_env() {
+    case $BLOCK_BUTTON in
+        1) log "Mouse 1"; MODE=extend; SIDE=right ;;
+        2) log "Mouse 2"; MODE=extend; SIDE=left  ;;
+        3) log "Mouse 3"; MODE=mirror ;;
+        4) log "Mouse 4"; MODE=extend; SIDE=right ;;
+        5) log "Mouse 5"; MODE=extend; SIDE=left  ;;
+    esac
+}
+
+print_status() {
+    status="$MODE"
+
+    [ -n "${SIDE}" ] && status="${status} $SIDE"
+    if [ -n "${BLOCK_NAME}" ]; then
+        case $MODE in
+            extend)
+                if [ "${SIDE}" = left ]; then
+                    status=" ${status}"
+                else
+                    status="${status} "
+                fi
+                ;;
+            mirror) status="${status} " ;;
+            laptop) status="${status} " ;;
+        esac
+    fi
+
+    echo $status
+}
+
+main() {
+    EXTERNAL=($(list_connected_external))
+
+    from_env
+    from_argv $@
+    from_fallback
+
+    configure_displays
+
+    print_status
+}
+
+main $@

@@ -1,0 +1,2 @@
+#!/bin/bash
+xdotool mousemove -w $(xdotool getwindowfocus) 0 0

@@ -8,6 +8,11 @@ command=xprop -id $(xprop -root | awk '/_NET_ACTIVE_WINDOW.WINDOW/ {print $NF}')
 color=#ababab
 interval=1
 
+[displays]
+command=~/.config/i3blocks/blocks/display
+color=#ffff00
+interval=once
+
 [volume]
 label=🔉
 #label=VOL
@@ -26,7 +31,7 @@ interval=30
 label=📶
 #label=W
 instance=wlan0
-command=/usr/share/i3blocks/network
+command=/usr/share/i3blocks/wifi
 color=#00FF00
 interval=10
 
@@ -34,7 +39,7 @@ interval=10
 label=E
 instance=eth0
 #instance=enp0s25
-command=/usr/share/i3blocks/network
+command=/usr/share/i3blocks/iface
 color=#00FF00
 interval=10
 
