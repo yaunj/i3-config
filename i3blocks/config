@@ -27,13 +27,9 @@ label=MEM
 command=/usr/share/i3blocks/memory
 interval=30
 
-[wireless]
-label=📶
-#label=W
-instance=wlan0
-command=/usr/share/i3blocks/wifi
-color=#00FF00
-interval=10
+[nmcli]
+command=~/.config/i3blocks/blocks/nmcli
+interval=30
 
 [ethernet]
 label=E
