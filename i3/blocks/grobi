@@ -1,0 +1,18 @@
+#!/bin/bash
+
+toggle_state() {
+    case $state in
+        laptop) grobi apply present ;;
+        present) grobi apply laptop ;;
+        *) grobi apply laptop ;;
+    esac
+}
+
+case $BLOCK_BUTTON in
+    1) toggle_state ;;
+esac
+
+state=$(cat ~/.cache/grobi.state)
+#state=$(grobi active)
+
+echo "${state}"

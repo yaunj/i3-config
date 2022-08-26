@@ -9,9 +9,10 @@ color=#ababab
 interval=1
 
 [displays]
-command=~/.config/i3blocks/blocks/display
+command=~/.config/i3/blocks/grobi  # display
 color=#ffff00
 interval=once
+signal=8
 
 [volume]
 label=🔉
@@ -28,7 +29,7 @@ command=/usr/share/i3blocks/memory
 interval=30
 
 [nmcli]
-command=~/.config/i3blocks/blocks/nmcli
+command=~/.config/i3/blocks/nmcli
 interval=30
 
 [ethernet]
@@ -41,10 +42,10 @@ interval=10
 
 [battery]
 #label=BAT
-label=🔌
+label=🔋
 command=/usr/share/i3blocks/battery
 interval=30
 
 [time]
-command=~/.config/i3blocks/blocks/i3-clock
+command=~/.config/i3/blocks/i3-clock
 interval=5

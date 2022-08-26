@@ -4,4 +4,4 @@ case $BLOCK_BUTTON in
     1) gsimplecal ;;
 esac
 
-date '+%a %d. %b %H:%M'
+date '+%a %d. %b %H:%M U:%V'

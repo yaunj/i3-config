@@ -1,0 +1,48 @@
+#!/bin/bash
+
+IFS=:
+active_connection=$(nmcli -t -f name,type,device con s --active)
+read -r name type device <<< "${active_connection}"
+
+QUALITY=$(tail -n+3 /proc/net/wireless | awk '{ print int($3 * 100 / 70) }')
+
+case "${type}" in
+    802-11-wireless)
+        QUALITY=$(grep $device /proc/net/wireless | awk '{ print int($3 * 100 / 70) }')
+        LONG="📶 ${name} (${device}) ${QUALITY}%"
+        SHORT="${name} ${QUALITY}%"
+        ;;
+    vpn)
+        if [[ -n "${QUALITY}" ]]; then
+            SUFFIX=" ${QUALITY}%"
+        else
+            SUFFIX=""
+        fi
+        LONG="🔒 ${name} (${device})${SUFFIX}"
+        SHORT="${name}"
+        ;;
+    802-3-ethernet)
+        QUALITY=100
+        LONG="🔌 ${device}"
+        SHORT="wired"
+        ;;
+    *)
+        QUALITY=100
+        LONG="🪨 offline"
+        SHORT="offline"
+        ;;
+esac
+
+echo ${LONG} # full text
+echo ${SHORT} # short text
+
+# color
+if [[ $QUALITY -ge 80 ]]; then
+    echo "#00FF00"
+elif [[ $QUALITY -lt 80 ]]; then
+    echo "#FFF600"
+elif [[ $QUALITY -lt 60 ]]; then
+    echo "#FFAE00"
+elif [[ $QUALITY -lt 40 ]]; then
+    echo "#FF0000"
+fi
